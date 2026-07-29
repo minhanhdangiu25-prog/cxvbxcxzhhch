@@ -12,15 +12,58 @@ hong='\x1b[95m'
 blue = '\x1b[1;34m'
 green = '\x1b[1;32m'
 
-import requests,json,os,sys
+import os
+import sys
+import subprocess
+
+REQUIRED_MODULES = {
+    "requests": "requests",
+    "pystyle": "pystyle",
+    "colorama": "colorama",
+    "bs4": "beautifulsoup4",
+    "selenium": "selenium",
+    "mechanize": "mechanize",
+    "webdriver_manager": "webdriver-manager",
+    "paho.mqtt": "paho-mqtt",
+    "pyfiglet": "pyfiglet",
+    "psutil": "psutil",
+    "termcolor": "termcolor",
+    "httpx": "httpx",
+    "zlapi": "zlapi",
+    "gtts": "gtts",
+}
+
+missing = []
+
+for module, package in REQUIRED_MODULES.items():
+    try:
+        __import__(module)
+    except ImportError:
+        missing.append(package)
+
+if missing:
+    print("[*] Đang cài đặt thư viện:", ", ".join(missing))
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "--upgrade"] + missing
+    )
+    print("[✓] Cài đặt hoàn tất!")
+
+import requests
+import json
+import pyfiglet
+from datetime import datetime
+from time import sleep, strftime
 from sys import platform
-from datetime import datetime        
-from time import sleep,strftime
-try:
-    from pystyle import Add,Center,Anime,Colors,Colorate,Write,System
-except:
-    os.system('pip install pystyle requests colorama beautifulsoup4 selenium mechanize webdriver_manager')
-    from pystyle import Add,Center,Anime,Colors,Colorate,Write,System
+
+from pystyle import (
+    Add,
+    Center,
+    Anime,
+    Colors,
+    Colorate,
+    Write,
+    System
+)
 
 banners = f"""⠀⠀⠀⠀⢨⠊⠀⢀⢀⠀⠀⠀⠈⠺⡵⡱⠀⠀⠀⢠⠃⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡘⢰⡁⠉⠊⠙⢎⣆⠀⠀⠀⠀⢩⢀⠜⠀⠀⠀
 ⠀⠀⠀⢠⠃⠀⠀⢸⢸⡀⠀⠀⠀⠀⠘⢷⡡⠀⠀⠎⠀⢰⣧⠀⠀⠈⡆⠀⠀⠀⠀⠀⠀⠀⠈⣐⢤⣀⣀⢙⠦⠀⠀⠀⠀⡇⠀⠀⠀⠀
